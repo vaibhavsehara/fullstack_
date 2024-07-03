@@ -1,0 +1,324 @@
+-- CREATE TABLES --
+
+CREATE TABLE Users (
+  Username VARCHAR(20) UNIQUE PRIMARY KEY,
+  Password VARCHAR(15) NOT NULL,
+  Address VARCHAR(30),
+  District VARCHAR(10),
+  City VARCHAR(10),
+  Pincode INT,
+  Cart_ID INT,
+  Current_Order_ID INT,
+  Past_order_ID INT 
+);
+
+CREATE TABLE Cart (
+  Cart_ID INT AUTO_INCREMENT PRIMARY KEY,
+  Username VARCHAR(20),
+  Product_ID INT,
+  Quantity INT,
+  Price DECIMAL(8,2),
+  Total_Price DECIMAL(8,2),
+  Cart_Created_At DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE Cart
+  ADD FOREIGN KEY (Username) REFERENCES Users(Username),
+  ADD FOREIGN KEY (Product_ID) REFERENCES Products(Product_ID);
+-- Add a new column for unique cart ID
+
+
+CREATE TABLE Category (
+  Category_ID INT PRIMARY KEY AUTO_INCREMENT,
+  Category_Name VARCHAR(50) NOT NULL,
+  Description TEXT
+);  
+
+CREATE TABLE Discount (
+  Discount_Code VARCHAR(20) PRIMARY KEY,
+  Discount_Percentage INT,
+  Discount_Condition VARCHAR(50)
+);
+
+CREATE TABLE Admin (
+  Admin_ID INT PRIMARY KEY AUTO_INCREMENT,
+  Username VARCHAR(20) UNIQUE NOT NULL,
+  Password VARCHAR(15) NOT NULL
+);
+
+CREATE TABLE Past_Orders (
+  Past_Order_ID INT PRIMARY KEY AUTO_INCREMENT,
+  User_ID VARCHAR(20),
+  Order_Date_Time DATETIME NOT NULL,
+  Total_Amount DECIMAL(8,2) NOT NULL,
+  Payment_Method VARCHAR(20),
+  Shipping_Address TEXT,
+  Total_Items INT,
+  Discount_Code VARCHAR(20)
+);
+
+CREATE TABLE Products (
+  Product_ID INT PRIMARY KEY AUTO_INCREMENT ,
+  Product_Name VARCHAR(50) NOT NULL,
+  Product_Description TEXT,
+  Price DECIMAL(8,2) NOT NULL,
+  Stock_Quantity INT,
+  Category_ID INT
+);
+
+CREATE TABLE Orders (
+  Order_ID INT PRIMARY KEY AUTO_INCREMENT,
+  Customer_ID VARCHAR(20), 
+  Is_Current_Order BOOLEAN DEFAULT FALSE,
+  Status VARCHAR(20) NOT NULL,
+  Order_Date_Time DATETIME NOT NULL,
+  Total_Amount DECIMAL(8,2) NOT NULL,
+  Payment_Method VARCHAR(20),
+  Cancellation_Reason VARCHAR(100),
+  Shipping_Address TEXT,
+  Discount_Code VARCHAR(20)
+);
+
+CREATE TABLE Order_Item (
+  Order_Item_ID INT PRIMARY KEY AUTO_INCREMENT,
+  Order_ID INT ,
+  Product_ID INT, 
+  Quantity INT,
+  Unit_Price DECIMAL(8,2),
+  Sub_Total DECIMAL(8,2)
+);
+
+CREATE TABLE Past_Order_Item (
+  Past_Order_Item_ID INT PRIMARY KEY AUTO_INCREMENT,
+  Past_Order_ID INT ,
+  Product_ID INT, 
+  Quantity INT,
+  Unit_Price DECIMAL(8,2),
+  Sub_Total DECIMAL(8,2)
+);
+
+CREATE TABLE OrderHistory (
+  OrderHistory_ID INT PRIMARY KEY AUTO_INCREMENT,
+  Username VARCHAR(20),
+  Product_ID INT,
+  Quantity INT,
+  Total_Price DECIMAL(8,2),
+  Order_Date_Time DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- CREATE TABLES --
+
+
+-- ADDING ALL THE CONSTRAINTS/FOREIGN KEYS --
+
+ALTER TABLE Users
+  ADD FOREIGN KEY (Current_Order_ID) REFERENCES Orders(Order_ID) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD FOREIGN KEY (Past_order_ID) REFERENCES Past_Orders(Past_Order_ID);
+
+
+ALTER TABLE Cart
+  ADD FOREIGN KEY (Username) REFERENCES Users(Username);
+
+ALTER TABLE Past_Orders
+  ADD FOREIGN KEY (User_ID) REFERENCES Users(Username),
+  ADD FOREIGN KEY (Discount_Code) REFERENCES Discount(Discount_Code),
+  ADD FOREIGN KEY (Total_Items) REFERENCES Past_Order_Item(Past_Order_Item_ID);
+
+ALTER TABLE Products
+  ADD FOREIGN KEY (Category_ID) REFERENCES Category(Category_ID);
+
+ALTER TABLE Orders
+  ADD FOREIGN KEY (Customer_ID) REFERENCES Users(Username),
+  ADD FOREIGN KEY (Discount_Code) REFERENCES Discount(Discount_Code);
+
+ALTER TABLE Order_Item
+  ADD FOREIGN KEY (Order_ID) REFERENCES Orders(Order_ID),
+  ADD FOREIGN KEY (Product_ID) REFERENCES Products(Product_ID);
+
+ALTER TABLE Past_Order_Item 
+  ADD FOREIGN KEY (Product_ID) REFERENCES Products(Product_ID),
+  ADD FOREIGN KEY (Past_Order_ID) REFERENCES Past_Orders(Past_Order_ID);
+
+-- ADDING ALL THE CONSTRAINTS/FOREIGN KEYS --
+
+
+-- drop all constraints/Foreign Keys --
+
+ALTER TABLE Users
+  DROP FOREIGN KEY users_ibfk_1,
+  DROP FOREIGN KEY users_ibfk_2,
+  DROP FOREIGN KEY users_ibfk_3,
+   DROP FOREIGN KEY users_ibfk_4;
+
+ALTER TABLE Cart
+ DROP FOREIGN KEY cart_ibfk_1,
+ DROP FOREIGN KEY cart_ibfk_2,
+ DROP FOREIGN KEY cart_ibfk_5;
+
+
+ALTER TABLE Past_Orders
+  
+  DROP FOREIGN KEY Past_Orders_ibfk_1,
+  DROP FOREIGN KEY Past_Orders_ibfk_2,
+  DROP FOREIGN KEY Past_Orders_ibfk_3;
+ALTER TABLE Products
+  DROP FOREIGN KEY Products_ibfk_1;
+
+ALTER TABLE Orders
+  DROP FOREIGN KEY Orders_ibfk_1,
+  DROP FOREIGN KEY Orders_ibfk_2;
+
+ALTER TABLE Order_Item
+  DROP FOREIGN KEY Order_Item_ibfk_1,
+  DROP FOREIGN KEY Order_Item_ibfk_2,
+  DROP FOREIGN KEY Order_Item_ibfk_3,
+  DROP FOREIGN KEY Order_Item_ibfk_4;
+  
+
+ALTER TABLE Past_Order_Item
+  DROP FOREIGN KEY Past_Order_Item_ibfk_1,
+  DROP FOREIGN KEY Past_Order_Item_ibfk_2;
+  
+
+
+-- drop all constraints/Foreign Keys --
+
+-- adding input entries --
+-- Inserting dummy data into Users table
+INSERT INTO Users (Username, Password, Address, District, City, Pincode)
+VALUES
+('john_doe', 'password123', '123 Main St', 'West', 'Cityville', 12345),
+('jane_smith', 'letmein', '456 Elm St', 'East', 'Townsville', 54321),
+('bob_jones', 'securepassword', '789 Oak St', 'North', 'Villageton', 98765);
+
+INSERT INTO Users (Username, Password, Address, District, City, Pincode)
+VALUES
+('shashwat', 'jha', 'unknown bud', 'SOUTH', 'RICH', 55555);
+-- Inserting dummy data into Cart table
+-- Inserting dummy data into the Cart table
+INSERT INTO Cart (Username, Product_ID, Quantity, Price, Total_Price)
+VALUES
+('john_doe', 1, 2, 10.99, 21.98),  -- John Doe has 2 items of Product ID 1
+('jane_smith', 3, 1, 15.50, 15.50), -- Jane Smith has 1 item of Product ID 3
+('bob_jones', 2, 3, 5.75, 17.25);   -- Bob Jones has 3 items of Product ID 2
+
+-- Additional data for your example:
+INSERT INTO Cart (Username, Product_ID, Quantity, Price, Total_Price)
+VALUES
+('shashwat', 3, 2, 10.99, 21.98);  -- Shashwat has 2 items of Product ID 3
+
+INSERT INTO Cart (Username, Product_ID, Quantity, Price, Total_Price)
+VALUES ('john_doe', 1, 2, 10.99, 21.98);
+
+INSERT INTO Cart (Username, Product_ID, Quantity, Price, Total_Price)
+VALUES ('john_doe', 2, 1, 5.75, 5.75);
+
+INSERT INTO Cart (Username, Product_ID, Quantity, Price, Total_Price)
+VALUES ('john_doe', 3, 3, 15.50, 46.50);
+
+
+-- Inserting dummy data into Category table
+INSERT INTO Category (Category_Name, Description)
+VALUES
+('Electronics', 'Gadgets and devices'),
+('Clothing', 'Apparel and accessories'),
+('Books', 'Literature and knowledge');
+
+-- Inserting dummy data into Discount table
+INSERT INTO Discount (Discount_Code, Discount_Percentage, Discount_Condition)
+VALUES
+('SAVE10', 10, 'Save 10% on orders over $50'),
+('FREESHIP', 100, 'Free shipping on all orders');
+
+-- Inserting dummy data into Admin table
+INSERT INTO Admin (Username, Password)
+VALUES
+('admin1', 'adminpassword1'),
+('admin2', 'adminpassword2');
+
+-- Inserting dummy data into Past_Orders table
+INSERT INTO Past_Orders (User_ID, Order_Date_Time, Total_Amount, Payment_Method, Shipping_Address, Total_Items, Discount_Code)
+VALUES
+('john_doe', NOW(), 45.98, 'Credit Card', '123 Main St, Cityville, West, 12345', 2, 'SAVE10'),
+('jane_smith', NOW(), 15.50, 'PayPal', '456 Elm St, Townsville, East, 54321', 1, NULL),
+('bob_jones', NOW(), 17.25, 'Cash on Delivery', '789 Oak St, Villageton, North, 98765', 3, 'FREESHIP');
+
+-- Inserting dummy data into Products table
+INSERT INTO Products (Product_Name, Product_Description, Price, Stock_Quantity, Category_ID)
+VALUES
+('Laptop', '15-inch, 8GB RAM, 512GB SSD', 999.99, 10, 1),
+('T-shirt', 'Cotton, size M, blue', 19.99, 20, 2),
+('Book', 'Bestseller novel', 12.50, 15, 3);
+
+-- Inserting dummy data into Orders table
+INSERT INTO Orders (Customer_ID, Is_Current_Order, Status, Order_Date_Time, Total_Amount, Payment_Method, Shipping_Address, Discount_Code)
+VALUES
+('john_doe', TRUE, 'Pending', NOW(), 45.98, 'Credit Card', '123 Main St, Cityville, West, 12345', 'SAVE10'),
+('jane_smith', TRUE, 'Shipped', NOW(), 15.50, 'PayPal', '456 Elm St, Townsville, East, 54321', NULL),
+('bob_jones', TRUE, 'Delivered', NOW(), 17.25, 'Cash on Delivery', '789 Oak St, Villageton, North, 98765', 'FREESHIP');
+
+-- Inserting dummy data into Order_Item table
+INSERT INTO Order_Item (Order_ID, Product_ID, Quantity, Unit_Price, Sub_Total)
+VALUES
+(1, 1, 2, 999.99, 1999.98),
+(2, 3, 1, 19.99, 19.99),
+(3, 2, 3, 12.50, 37.50);
+
+-- Inserting dummy data into Past_Order_Item table
+INSERT INTO Past_Order_Item (Past_Order_ID, Product_ID, Quantity, Unit_Price, Sub_Total)
+VALUES
+(1, 1, 2, 999.99, 1999.98),
+(2, 3, 1, 19.99, 19.99),
+(3, 2, 3, 12.50, 37.50);
+
+INSERT INTO Users;
+
+
+-- adding input entries --
+
+
+
+-- drop all tables --
+
+DROP TABLE IF EXISTS Past_Order_Item;
+DROP TABLE IF EXISTS Admin;
+DROP TABLE IF EXISTS Orders;
+DROP TABLE IF EXISTS Products;
+DROP TABLE IF EXISTS Past_Orders;
+DROP TABLE IF EXISTS Discount;
+DROP TABLE IF EXISTS Category;
+DROP TABLE IF EXISTS Order_Item;
+DROP TABLE IF EXISTS Cart;
+DROP TABLE IF EXISTS Users;
+
+-- drop all tables --
+
+SELECT * FROM Users;
+SELECT * FROM Cart WHERE Username = 'tejas';
+SELECT * FROM Category;
+SELECT * FROM Discount;
+SELECT * FROM Admin;
+SELECT * FROM Past_Orders;
+SELECT * FROM Products;
+SELECT * FROM Orders;
+SELECT * FROM Order_Item;
+SELECT * FROM Past_Order_Item;
+SELECT * FROM orderhistory;
+
+SHOW CREATE TABLE Users;
+
+SELECT Category_Name, SUM(Price * Quantity) AS Revenue
+FROM Products
+INNER JOIN Order_Item ON Products.Product_ID = Order_Item.Product_ID
+INNER JOIN Orders ON Order_Item.Order_ID = Orders.Order_ID
+INNER JOIN Category ON Products.Category_ID = Category.Category_ID
+GROUP BY Category_Name;
+
+select * from products;
+
+SELECT p.Product_Name, c.Quantity, c.Total_Price FROM Cart c INNER JOIN Products p ON c.Product_ID = p.Product_ID WHERE c.Username = 'john_doe' ;
+
+SELECT p.Product_Name, c.Quantity, c.Total_Price FROM Cart c INNER JOIN Products p ON c.Product_ID = p.Product_ID WHERE c.Username = 'shashwat';
+
+update products
