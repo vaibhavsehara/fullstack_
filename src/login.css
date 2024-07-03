@@ -1,0 +1,73 @@
+/* login.css */
+
+body {
+    margin: 0;
+    padding: 0;
+    background-size: contain;
+    background-position: center;
+    font-family: Arial, sans-serif; /* Specify your preferred font-family */
+  }
+  
+  .container {
+    width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 20px;
+    background-color: rgb(255, 255, 255); /* Add a semi-transparent white background to make the form stand out */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #000000;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 10px;
+    color: #666;
+  }
+  body {
+    background-color: rgb(0, 0, 0); /* Set the background color to light gray */
+}
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ffffff;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  button {
+    width: 100%;
+    padding: 12px;
+    background-color: #000000;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #000000;
+  }
+  
+  #message {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #ffffff;
+    color: #ff0000;
+    border: 1px solid #ff0000;
+    border-radius: 5px;
+    text-align: center;
+  }
+  
